@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import colors from 'colors';
 import dbConnect from './config/db/dbConnect.js';
 import userRoute from './routes/userRoute.js';
+import postsRoute from './routes/postRoute.js';
 import {
   errorHandler,
   notFoundHandler,
@@ -20,6 +21,9 @@ app.use(express.json());
 
 // User Route
 app.use('/api/users', userRoute);
+
+// Post Route
+app.use('/api/posts', postsRoute);
 
 // Error Handler
 app.use(notFoundHandler);

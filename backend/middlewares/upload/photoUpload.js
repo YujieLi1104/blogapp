@@ -23,7 +23,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const profilePhotoUpload = multer({
+const photoUpload = multer({
   storage: fileStorage,
   fileFilter: fileFilter,
   limits: {
@@ -31,8 +31,8 @@ const profilePhotoUpload = multer({
   },
 });
 
-// Image resizing
-const resizeImage = async (req, res, next) => {
+// Profile Image resizing
+const resizeProfileImage = async (req, res, next) => {
   // check if there is no file
   if (!req.file) {
     return next();
@@ -49,4 +49,22 @@ const resizeImage = async (req, res, next) => {
   next();
 };
 
-export { profilePhotoUpload, resizeImage };
+// Post Image resizing
+const resizePostImage = async (req, res, next) => {
+  // check if there is no file
+  if (!req.file) {
+    return next();
+  }
+
+  req.file.filename = `user-${Date.now()}-${req.file.originalname}`;
+
+  await sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(path.join(`public/images/posts/${req.file.filename}`));
+
+  next();
+};
+
+export { photoUpload, resizeProfileImage, resizePostImage };

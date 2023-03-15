@@ -2,6 +2,7 @@
 
 import User from '../models/userModel.js';
 import expressAsyncHandler from 'express-async-handler';
+import fs from 'fs';
 import generateToken from '../config/token/generateToken.js';
 import validateMongoId from '../utils/validateMongodbID.js';
 import dotenv from 'dotenv';
@@ -113,7 +114,7 @@ const fetchUserProfile = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoId(id);
   try {
-    const profile = await User.findById(id);
+    const profile = await User.findById(id).populate('posts');
     res.json(profile);
   } catch (error) {
     res.json(error);
@@ -404,8 +405,10 @@ const uploadProfilePic = expressAsyncHandler(async (req, res) => {
     },
     { new: true }
   );
+  // Remove uploaded image
+  fs.unlinkSync(localPath);
 
-  res.json(foundUser);
+  res.json(imgUploaded);
 });
 
 export {

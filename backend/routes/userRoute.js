@@ -21,7 +21,7 @@ import {
   uploadProfilePic,
 } from '../controllers/userController.js';
 import authMiddleware from '../middlewares/auth/authMiddleware.js';
-import { profilePhotoUpload, resizeImage } from '../middlewares/upload/profilePhotoUpload.js';
+import { photoUpload, resizeProfileImage } from '../middlewares/upload/photoUpload.js';
 
 const userRoute = express.Router();
 
@@ -30,8 +30,8 @@ userRoute.post('/login', loginUser);
 userRoute.put(
   '/profile-pic',
   authMiddleware,
-  profilePhotoUpload.single('image'),
-  resizeImage,
+  photoUpload.single('image'),
+  resizeProfileImage,
   uploadProfilePic
 );
 userRoute.get('/', authMiddleware, fetchAllUsers);
