@@ -6,7 +6,9 @@ import {
   fetchAllPosts,
   fetchSinglePost,
   updatePost,
-  deletePost
+  deletePost,
+  likePost,
+  dislikePost
 } from '../controllers/postController.js';
 import authMiddleware from '../middlewares/auth/authMiddleware.js';
 import {
@@ -16,6 +18,8 @@ import {
 
 const postsRoute = express.Router();
 
+postsRoute.put('/likes',authMiddleware, likePost);
+postsRoute.put('/dislikes',authMiddleware, dislikePost);
 postsRoute.post(
   '/',
   authMiddleware,

@@ -15,14 +15,6 @@ const postSchema = new mongoose.Schema(
       required: [true, 'Please add a category'],
       default: 'All',
     },
-    isLiked: {
-      type: Boolean,
-      default: false,
-    },
-    isDisLiked: {
-      type: Boolean,
-      default: false,
-    },
     numViews: {
       type: Number,
       default: 0,
