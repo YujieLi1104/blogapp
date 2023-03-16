@@ -7,6 +7,7 @@ import dbConnect from './config/db/dbConnect.js';
 import userRoute from './routes/userRoute.js';
 import postsRoute from './routes/postRoute.js';
 import commentRoute from './routes/commentRoute.js';
+import emailRoute from './routes/emailRoute.js';
 import {
   errorHandler,
   notFoundHandler,
@@ -28,6 +29,9 @@ app.use('/api/posts', postsRoute);
 
 // Comment Route
 app.use('/api/comments', commentRoute);
+
+// Email Route
+app.use('/api/emails', emailRoute);
 
 // Error Handler
 app.use(notFoundHandler);
