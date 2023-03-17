@@ -28,20 +28,20 @@ const createPost = expressAsyncHandler(async (req, res) => {
   }
 
   // Get the oath to image
-  const localPath = `public/images/posts/${req.file.filename}`;
+  // const localPath = `public/images/posts/${req.file.filename}`;
   // Upload the image to cloudinary
-  const imgUploaded = await cloudinaryUploadImage(localPath);
+  // const imgUploaded = await cloudinaryUploadImage(localPath);
 
   try {
-    // const post = await Post.create({
-    //   ...req.body,
-    //   image: imgUploaded?.url,
-    //   user: _id,
-    // });
+    const post = await Post.create({
+      ...req.body,
+      image: imgUploaded?.url,
+      user: _id,
+    });
 
     // Remove uploaded image
-    fs.unlinkSync(localPath);
-    res.json(localPath);
+    // fs.unlinkSync(localPath);
+    res.json(post);
   } catch (error) {
     res.json(error);
   }

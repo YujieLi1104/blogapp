@@ -8,6 +8,7 @@ import userRoute from './routes/userRoute.js';
 import postsRoute from './routes/postRoute.js';
 import commentRoute from './routes/commentRoute.js';
 import emailRoute from './routes/emailRoute.js';
+import categoryRoute from './routes/categoryRoute.js';
 import {
   errorHandler,
   notFoundHandler,
@@ -32,6 +33,9 @@ app.use('/api/comments', commentRoute);
 
 // Email Route
 app.use('/api/emails', emailRoute);
+
+// Category Route
+app.use('/api/category', categoryRoute);
 
 // Error Handler
 app.use(notFoundHandler);
