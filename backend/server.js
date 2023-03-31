@@ -3,6 +3,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import colors from 'colors';
+import cors from 'cors';
 import dbConnect from './config/db/dbConnect.js';
 import userRoute from './routes/userRoute.js';
 import postsRoute from './routes/postRoute.js';
@@ -21,6 +22,9 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+
+// cors
+app.use(cors());
 
 // User Route
 app.use('/api/users', userRoute);
