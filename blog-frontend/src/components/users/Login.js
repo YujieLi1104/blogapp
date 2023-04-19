@@ -30,9 +30,8 @@ const Login = () => {
   });
 
   // Redirect to
-  const store = useSelector((state) => state?.users);
-  console.log(store);
-  const { userAuth, status, appErr, serverErr } = store;
+  const state = useSelector((state) => state?.users);
+  const { userAuth, status, appErr, serverErr } = state;
   if (userAuth) {
     return <Navigate to='/profile' />;
   }
@@ -136,7 +135,7 @@ const Login = () => {
                     {status === 'loading' ? (
                       <button
                         disabled
-                        className='py-4 w-full bg-grey-500 text-white font-bold rounded-full transition duration-200'
+                        className='py-4 w-full bg-gray-500 text-white font-bold rounded-full transition duration-200'
                       >
                         Loading...
                       </button>
