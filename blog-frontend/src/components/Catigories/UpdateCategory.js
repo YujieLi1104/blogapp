@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { PlusCircleIcon, BookOpenIcon } from '@heroicons/react/24/solid';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Navigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {
@@ -17,7 +17,6 @@ const formSchema = Yup.object().shape({
 });
 
 const UpdateCategory = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
 
@@ -28,7 +27,6 @@ const UpdateCategory = () => {
 
   // get data from store
   const state = useSelector((state) => state?.category);
-
   const { category, status, appErr, serverErr, isEdited, isDeleted } = state;
 
   // formik
@@ -40,13 +38,12 @@ const UpdateCategory = () => {
     onSubmit: (values) => {
       // build up the date for update
       dispatch(updateCategory({ title: values.title, id }));
-      navigate('/category-list');
     },
     validationSchema: formSchema,
   });
 
   //redirect to category list
-  if (isEdited || isDeleted) return navigate('/category-list');
+  if (isEdited || isDeleted) return <Navigate to='/category-list' />;
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8'>
       <div className='max-w-md w-full space-y-8'>

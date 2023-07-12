@@ -32,7 +32,7 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-const AdminNavbar = () => {
+const AdminNavbar = ({isLogin}) => {
   //Navigation
   const userNavigation = [
     { name: 'Your Profile', href: `/profile` },
@@ -119,7 +119,7 @@ const AdminNavbar = () => {
                             <span className='sr-only'>Open user menu</span>
                             <img
                               className='h-8 w-8 rounded-full'
-                              // src={userAuth?.profilePhoto}
+                              src={isLogin?.profilePic}
                               alt='Admin Profile'
                             />
                           </Menu.Button>

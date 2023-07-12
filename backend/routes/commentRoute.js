@@ -6,14 +6,14 @@ import {
   fetchAllComments,
   fetchSingleComment,
   updateComment,
-  deleteComment
+  deleteComment,
 } from '../controllers/commentController.js';
 import authMiddleware from '../middlewares/auth/authMiddleware.js';
 
 const commentRoute = express.Router();
 
 commentRoute.post('/', authMiddleware, createComment);
-commentRoute.get('/', authMiddleware, fetchAllComments);
+commentRoute.get('/', fetchAllComments);
 commentRoute.get('/:id', authMiddleware, fetchSingleComment);
 commentRoute.put('/:id', authMiddleware, updateComment);
 commentRoute.delete('/:id', authMiddleware, deleteComment);

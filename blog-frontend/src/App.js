@@ -11,13 +11,22 @@ import Login from './components/users/Login';
 import Register from './components/users/Register';
 import PrivateProtectRoute from './components/Navigation/PrivateProtectRoute';
 import AdminRoute from './components/Navigation/AdminRoute';
+import CreatePost from './components/Posts/CreatePost';
+import PostsList from './components/Posts/PostsList';
+import PostDetails from './components/Posts/PostDetails';
+import UpdatePost from './components/Posts/UpdatePost';
+import UpdateComment from './components/Comments/UpdateComment';
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
-        <Route element={<PrivateProtectRoute />}></Route>
+        <Route path='/create-post' element={<CreatePost />} exact />
+        <Route element={<PrivateProtectRoute />}>
+          <Route path='/update-post/:id' element={<UpdatePost />} exact />
+          <Route path='/update-comment/:id' element={<UpdateComment />} exact />
+        </Route>
         <Route element={<AdminRoute />}>
           <Route
             path='/update-category/:id'
@@ -27,6 +36,8 @@ function App() {
           <Route path='/add-category' element={<AddNewCategory />} exact />
           <Route path='/category-list' element={<CategoryList />} exact />
         </Route>
+        <Route path='/posts' element={<PostsList />} exact />
+        <Route path='/posts/:id' element={<PostDetails />} exact />
         <Route path='/' element={<HomePage />} exact />
         <Route path='/register' element={<Register />} exact />
         <Route path='/login' element={<Login />} exact />

@@ -19,7 +19,7 @@ const createPost = expressAsyncHandler(async (req, res) => {
   const isProfane = filter.isProfane(req.body.title, req.body.description);
   // Block user
   if (isProfane) {
-    const user = await User.findByIdAndUpdate(_id, {
+    await User.findByIdAndUpdate(_id, {
       isBlocked: true,
     });
     throw new Error(
@@ -27,20 +27,29 @@ const createPost = expressAsyncHandler(async (req, res) => {
     );
   }
 
-  // Get the oath to image
-  // const localPath = `public/images/posts/${req.file.filename}`;
-  // Upload the image to cloudinary
-  // const imgUploaded = await cloudinaryUploadImage(localPath);
+  // 1. Get the oath to image
+  const localPath = `public/images/posts/${req.file.filename}`;
+  // 2. Upload the image to cloudinary
+  const imgUploaded = await cloudinaryUploadImage(localPath);
 
   try {
     const post = await Post.create({
       ...req.body,
-      image: imgUploaded?.url,
       user: _id,
+      image: imgUploaded?.url,
     });
 
+    // Update the user post count
+    await User.findByIdAndUpdate(
+      _id,
+      {
+        $inc: { postCount: 1 },
+      },
+      { new: true }
+    );
+
     // Remove uploaded image
-    // fs.unlinkSync(localPath);
+    fs.unlinkSync(localPath);
     res.json(post);
   } catch (error) {
     res.json(error);
@@ -51,9 +60,18 @@ const createPost = expressAsyncHandler(async (req, res) => {
 // Fetch all posts
 //-------------------------------------
 const fetchAllPosts = expressAsyncHandler(async (req, res) => {
+  const hasCategory = req.query.category;
   try {
-    const posts = await Post.find({}).populate('user');
-    res.json(posts);
+    // Check if it has a category
+    if (hasCategory) {
+      const posts = await Post.find({ category: hasCategory })
+        .populate('user')
+        .populate('comments');
+      res.json(posts);
+    } else {
+      const posts = await Post.find({}).populate('user').populate('comments');
+      res.json(posts);
+    }
   } catch (error) {
     res.json(error);
   }
@@ -66,7 +84,11 @@ const fetchSinglePost = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoId(id);
   try {
-    const post = await Post.findById(id).populate('user').populate('dislikes').populate('likes');
+    const post = await Post.findById(id)
+      .populate('user')
+      .populate('dislikes')
+      .populate('likes')
+      .populate('comments');
     // Update number of views
     await Post.findByIdAndUpdate(
       id,

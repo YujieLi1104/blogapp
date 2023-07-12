@@ -60,7 +60,6 @@ const updateComment = expressAsyncHandler(async (req, res) => {
     const updateComment = await Comment.findByIdAndUpdate(
       id,
       {
-        post: req?.body?.postId,
         user: req?.user,
         description: req?.body?.description,
       },

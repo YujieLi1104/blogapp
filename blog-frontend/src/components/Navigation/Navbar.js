@@ -11,13 +11,12 @@ const Navbar = () => {
   const state = useSelector((state) => state.users);
   const { userAuth } = state;
   const isAdmin = userAuth?.isAdmin;
-  console.log(isAdmin);
   return (
     <div>
       {isAdmin ? (
-        <AdminNavbar />
+        <AdminNavbar isLogin={userAuth}/>
       ) : userAuth ? (
-        <PrivateNavbar />
+        <PrivateNavbar isLogin={userAuth} />
       ) : (
         <PublicNavbar />
       )}

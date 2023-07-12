@@ -30,7 +30,7 @@ export const createCategory = createAsyncThunk(
         config
       );
       // dispatch action
-      dispatch(resetCategoryAction())
+      dispatch(resetCategoryAction());
       return data;
     } catch (error) {
       if (!error?.response) {
@@ -161,7 +161,7 @@ const categorySlice = createSlice({
     // dispatch action to redirect
     builder.addCase(resetCategoryAction, (state, action) => {
       state.isCreated = true;
-    })
+    });
     builder.addCase(createCategory.fulfilled, (state, action) => {
       state.status = 'succeeded';
       state.category = action?.payload;
@@ -222,7 +222,7 @@ const categorySlice = createSlice({
     // Dispatch action for redirect
     builder.addCase(resetDeleteAction, (state, action) => {
       state.isDeleted = true;
-    })
+    });
     builder.addCase(deleteCategory.fulfilled, (state, action) => {
       state.status = 'succeeded';
       state.deletedCategory = action?.payload;

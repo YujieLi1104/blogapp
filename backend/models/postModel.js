@@ -13,7 +13,6 @@ const postSchema = new mongoose.Schema(
     category: {
       type: String,
       required: [true, 'Please add a category'],
-      default: 'All',
     },
     numViews: {
       type: Number,
@@ -49,11 +48,15 @@ const postSchema = new mongoose.Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
-  {
     timestamps: true,
   }
 );
+// populate comments
+postSchema.virtual('comments', {
+  ref: 'Comment',
+  foreignField: 'post',
+  localField: '_id',
+});
 
 // compile model from schema
 const Post = mongoose.model('Post', postSchema);
