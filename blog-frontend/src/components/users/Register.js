@@ -31,7 +31,6 @@ const Register = () => {
     },
     onSubmit: (values) => {
       dispatch(registerUser(values));
-      console.log(values);
     },
     validationSchema: formSchema,
   });

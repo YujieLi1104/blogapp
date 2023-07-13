@@ -136,7 +136,6 @@ const updateUserProfile = expressAsyncHandler(async (req, res) => {
         firstName: req.body?.firstName,
         lastName: req.body?.lastName,
         email: req.body?.email,
-        profilePic: req.body?.profilePic,
         bio: req.body?.bio,
       },
     },
