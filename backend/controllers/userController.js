@@ -177,6 +177,10 @@ const followingUser = expressAsyncHandler(async (req, res) => {
     throw new Error('You are already following this user');
   }
 
+  if (loginUserId === targetUser.id) {
+    throw new Error('You cannot follow yourself');
+  }
+
   // Step 1: Find the user you want to follow and update it's followers array
   await User.findByIdAndUpdate(
     followedId,
@@ -212,6 +216,14 @@ const unfollowUser = expressAsyncHandler(async (req, res) => {
   // Find the target user and check if they are followed by the current user
   const targetUser = await User.findById(unfollowId);
   const isFollowing = targetUser.followers.includes(loginUserId);
+
+  if (!isFollowing) {
+    throw new Error('You are not following this user');
+  }
+
+  if (loginUserId === targetUser.id) {
+    throw new Error('You cannot unfollow yourself');
+  }
 
   // Step 1: Find the user you want to unfollow and update it's followers array
   await User.findByIdAndUpdate(

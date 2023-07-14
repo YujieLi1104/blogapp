@@ -1,7 +1,7 @@
 /** @format */
 
 import { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   HeartIcon,
   FaceFrownIcon,
@@ -10,31 +10,56 @@ import {
 } from '@heroicons/react/24/outline';
 import { EnvelopeIcon, EyeIcon } from '@heroicons/react/24/solid';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProfile } from '../../redux/slices/users/usersSlice';
+import {
+  fetchProfile,
+  followUser,
+  unfollowUser,
+} from '../../redux/slices/users/usersSlice';
 import DateFormatter from '../../utils/DateFormatter';
 import LoadingSpinners from '../../utils/LoadingSpinners';
 
 export default function Profile() {
   const { id } = useParams();
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(fetchProfile(id));
-  }, [id, dispatch]);
+  const navigate = useNavigate();
 
   // user data from store
   const users = useSelector((state) => state.users);
-  const { profile, status, appErr, serverErr } = users;
-  console.log(profile);
+  const {
+    profile,
+    profileStatus,
+    profileAppErr,
+    profileServerErr,
+    followed,
+    unfollowed,
+    userAuth,
+  } = users;
+
+  // fetch user profile
+  useEffect(() => {
+    dispatch(fetchProfile(id));
+  }, [id, dispatch, followed, unfollowed]);
+
+  // send email handle click
+  const sendEmailNavigate = () => {
+    navigate('/send-email', { state: { email: profile?.email, id: id } });
+  };
+
+  const isLoginUser = userAuth?._id === profile?._id;
+
+  const isFollowing = profile?.followers.map(
+    (follower) => follower === userAuth?._id
+  );
 
   return (
     <>
       <div className='min-h-screen bg-green-500 justify-center item-center'>
-        {status === 'loading' ? (
+        {profileStatus === 'loading' ? (
           <LoadingSpinners />
-        ) : appErr || serverErr ? (
+        ) : profileAppErr || profileServerErr ? (
           <h2 className='text-yellow-400 text-2xl'>
-            {serverErr}
-            {appErr}
+            {profileServerErr}
+            {profileAppErr}
           </h2>
         ) : (
           <div className='h-screen flex overflow-hidden bg-white'>
@@ -108,67 +133,87 @@ export default function Profile() {
 
                               {/* is login user */}
                               {/* Upload profile photo */}
-                              <Link
-                                to={`/upload-profile-photo`}
-                                className='inline-flex justify-center w-48 px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500'
-                              >
-                                <ArrowUpTrayIcon
-                                  className='-ml-1 mr-2 h-5 w-5 text-gray-400'
-                                  aria-hidden='true'
-                                />
-                                <span>Upload Photo</span>
-                              </Link>
-                            </div>
-
-                            <div className='mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4'>
-                              {/* // Hide follow button from the same */}
-                              <div>
-                                <button
-                                  // onClick={() =>
-                                  //   dispatch(unFollowUserAction(profile?._id))
-                                  // }
-                                  className='inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500'
+                              {isLoginUser && (
+                                <Link
+                                  to={`/upload-profile-photo`}
+                                  className='inline-flex justify-center w-48 px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500'
                                 >
-                                  <FaceFrownIcon
+                                  <ArrowUpTrayIcon
                                     className='-ml-1 mr-2 h-5 w-5 text-gray-400'
                                     aria-hidden='true'
                                   />
-                                  <span>Unfollow</span>
-                                </button>
+                                  <span>Upload Photo</span>
+                                </Link>
+                              )}
+                            </div>
 
-                                <>
-                                  <button
-                                    // onClick={followHandler}
-                                    type='button'
-                                    className='inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500'
-                                  >
-                                    <HeartIcon
-                                      className='-ml-1 mr-2 h-5 w-5 text-gray-400'
-                                      aria-hidden='true'
-                                    />
-                                    <span>Follow </span>
-                                  </button>
-                                </>
-                              </div>
+                            <div
+                              className='mt-6 flex flex-col justify-stretch space-y-3 
+                            sm:flex-row sm:space-y-0 sm:space-x-4'
+                            >
+                              {/* // Hide follow button from the same */}
+                              {!isLoginUser && (
+                                <div>
+                                  {isFollowing ? (
+                                    <button
+                                      onClick={() => dispatch(unfollowUser(id))}
+                                      className='inline-flex justify-center px-4 py-2 border 
+                                      border-gray-300 shadow-sm text-sm font-medium rounded-md 
+                                      text-gray-700 bg-white hover:bg-gray-50 
+                                      focus:outline-none focus:ring-2 focus:ring-offset-2 
+                                      focus:ring-pink-500'
+                                    >
+                                      <FaceFrownIcon
+                                        className='-ml-1 mr-2 h-5 w-5 text-gray-400'
+                                        aria-hidden='true'
+                                      />
+                                      <span>Unfollow</span>
+                                    </button>
+                                  ) : (
+                                    <button
+                                      onClick={() => {
+                                        dispatch(followUser(id));
+                                      }}
+                                      type='button'
+                                      className='inline-flex justify-center px-4 py-2 border 
+                                      border-gray-300 shadow-sm text-sm font-medium rounded-md 
+                                      text-gray-700 bg-white hover:bg-gray-50 
+                                      focus:outline-none focus:ring-2 focus:ring-offset-2 
+                                      focus:ring-pink-500'
+                                    >
+                                      <HeartIcon
+                                        className='-ml-1 mr-2 h-5 w-5 text-gray-400'
+                                        aria-hidden='true'
+                                      />
+                                      <span>Follow</span>
+                                    </button>
+                                  )}
+                                </div>
+                              )}
 
                               {/* Update Profile */}
 
                               <>
-                                <Link
-                                  to={`/update-profile/${id}`}
-                                  className='inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500'
-                                >
-                                  <UserIcon
-                                    className='-ml-1 mr-2 h-5 w-5 text-gray-400'
-                                    aria-hidden='true'
-                                  />
-                                  <span>Update Profile</span>
-                                </Link>
+                                {isLoginUser && (
+                                  <Link
+                                    to={`/update-profile/${id}`}
+                                    className='inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500'
+                                  >
+                                    <UserIcon
+                                      className='-ml-1 mr-2 h-5 w-5 text-gray-400'
+                                      aria-hidden='true'
+                                    />
+                                    <span>Update Profile</span>
+                                  </Link>
+                                )}
                               </>
                               {/* Send Mail */}
-                              <Link
-                                // to={`/send-mail?email=${profile?.email}`}
-                                className='inline-flex justify-center bg-indigo-900 px-4 py-2 border border-yellow-700 shadow-sm text-sm font-medium rounded-md text-gray-700  hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500'
+                              <button onClick={sendEmailNavigate}
+                                to={'/send-email'}
+                                className='inline-flex justify-center bg-indigo-900 px-4 py-2 
+                                border border-yellow-700 shadow-sm text-sm font-medium 
+                                rounded-md text-gray-700  hover:bg-yellow-600 focus:outline-none 
+                                focus:ring-2 focus:ring-offset-2 focus:ring-pink-500'
                               >
                                 <EnvelopeIcon
                                   className='-ml-1 mr-2 h-5 w-5 text-gray-200'
@@ -177,7 +222,7 @@ export default function Profile() {
                                 <span className='text-base mr-2  text-bold text-yellow-500'>
                                   Send Message
                                 </span>
-                              </Link>
+                              </button>
                             </div>
                           </div>
                         </div>
