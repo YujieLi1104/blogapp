@@ -20,6 +20,7 @@ import Profile from './components/users/Profile';
 import UploadProfilePhoto from './components/users/UploadProfilePhoto';
 import UpdateProfileForm from './components/users/UpdateProfileForm';
 import SendEmail from './components/users/SendEmail';
+import AccountVerified from './components/users/AccountVerified';
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             exact
           />
           <Route path='/update-profile/:id' element={<UpdateProfileForm />} exact />
+          <Route path='/verify-account/:token' element={<AccountVerified />} exact />
         </Route>
         <Route element={<AdminRoute />}>
           <Route
@@ -45,11 +47,11 @@ function App() {
             exact
           />
           <Route path='/add-category' element={<AddNewCategory />} exact />
-          <Route path='/category-list' element={<CategoryList />} exact />
           <Route path='/send-email' element={<SendEmail />} exact />
         </Route>
         <Route path='/posts' element={<PostsList />} exact />
         <Route path='/posts/:id' element={<PostDetails />} exact />
+        <Route path='/category-list' element={<CategoryList />} exact />
         <Route path='/' element={<HomePage />} exact />
         <Route path='/register' element={<Register />} exact />
         <Route path='/login' element={<Login />} exact />

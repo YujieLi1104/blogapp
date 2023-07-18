@@ -54,6 +54,7 @@ const loginUser = expressAsyncHandler(async (req, res) => {
       profilePic: userFound?.profilePic,
       isAdmin: userFound?.isAdmin,
       token: generateToken(userFound?._id),
+      isVerified: userFound?.isAccountVerified,
     });
   } else {
     res.status(401);
@@ -297,7 +298,7 @@ const generateVerificationToken = expressAsyncHandler(async (req, res) => {
     const verifyURL = `If you were requested to verify your account, verify now within 10 minutes, 
     otherwise ignore this message <a href="http://localhost:3000/verify-account/${verificationToken}">link</a>`;
     const msg = {
-      to: 'fiudahfgaf@gmail.com',
+      to: user?.email,
       from: 'yujie.li1994@gmail.com',
       subject: 'Verify your account',
       html: verifyURL,

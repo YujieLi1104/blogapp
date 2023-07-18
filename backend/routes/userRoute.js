@@ -44,7 +44,7 @@ userRoute.post(
   '/generate-verify-email-token',
   authMiddleware,
   generateVerificationToken
-);
+); 
 userRoute.post('/verify-user', authMiddleware, verifyUser);
 userRoute.put('/block-user/:id', authMiddleware, blockUser);
 userRoute.put('/unblock-user/:id', authMiddleware, unblockUser);
