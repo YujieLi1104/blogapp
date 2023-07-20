@@ -15,13 +15,14 @@ import { blockUser } from '../utils/blockUser.js';
 const createPost = expressAsyncHandler(async (req, res) => {
   const { _id } = req.user;
 
-  // Block user
+  // Display message if user is blocked
   blockUser(req.user);
 
   // validateMongoId(req.body.user);
   // Check for bad words
   const filter = new Filter();
   const isProfane = filter.isProfane(req.body.title, req.body.description);
+
   // Block user
   if (isProfane) {
     await User.findByIdAndUpdate(_id, {
@@ -34,6 +35,17 @@ const createPost = expressAsyncHandler(async (req, res) => {
 
   // 1. Get the oath to image
   const localPath = `public/images/posts/${req.file.filename}`;
+  // Prevent users creating more than two posts if they are starter accounts
+  if (
+    req?.user?.accountTypes === 'Starter Account' &&
+    req?.user?.postCount >= 2
+  ) {
+    // Remove uploaded image
+    fs.unlinkSync(localPath);
+    throw new Error(
+      'Starter Account can only create two posts. Get 5 followers to be Pro account'
+    );
+  }
   // 2. Upload the image to cloudinary
   const imgUploaded = await cloudinaryUploadImage(localPath);
 

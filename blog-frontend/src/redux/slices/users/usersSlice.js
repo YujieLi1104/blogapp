@@ -56,10 +56,10 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem('userInfo', JSON.stringify(data));
       return data;
     } catch (error) {
-      if (!error.message) {
+      if (!error.response) {
         throw error;
       }
-      return rejectWithValue(error?.response?.message);
+      return rejectWithValue(error?.response?.data);
     }
   }
 );

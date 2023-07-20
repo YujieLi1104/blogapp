@@ -85,7 +85,7 @@ userSchema.virtual('posts', {
 // Account Type
 userSchema.virtual('accountTypes').get(function () {
   const totalFollowers = this.followers?.length;
-  return totalFollowers >= 1 ? 'Pro Account' : 'Starter Account';
+  return totalFollowers >= 5 ? 'Pro Account' : 'Starter Account';
 });
 
 // Hash user password
