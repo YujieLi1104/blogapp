@@ -21,6 +21,7 @@ import UploadProfilePhoto from './components/users/UploadProfilePhoto';
 import UpdateProfileForm from './components/users/UpdateProfileForm';
 import SendEmail from './components/users/SendEmail';
 import AccountVerified from './components/users/AccountVerified';
+import UsersList from './components/users/UsersList/UsersList';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           />
           <Route path='/add-category' element={<AddNewCategory />} exact />
           <Route path='/send-email' element={<SendEmail />} exact />
+          <Route path='/users' element={<UsersList />} exact />
         </Route>
         <Route path='/posts' element={<PostsList />} exact />
         <Route path='/posts/:id' element={<PostDetails />} exact />

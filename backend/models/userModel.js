@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema(
     },
     accountVerificationToken: String,
     accountVerificationTokenExpires: Date,
-    viewdBy: {
+    viewedBy: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     },
     followers: {
@@ -80,6 +80,12 @@ userSchema.virtual('posts', {
   localField: '_id',
   foreignField: 'user',
   justOne: false,
+});
+
+// Account Type
+userSchema.virtual('accountTypes').get(function () {
+  const totalFollowers = this.followers?.length;
+  return totalFollowers >= 1 ? 'Pro Account' : 'Starter Account';
 });
 
 // Hash user password

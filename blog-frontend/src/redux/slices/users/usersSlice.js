@@ -64,6 +64,30 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// fetch all users
+export const fetchAllUsers = createAsyncThunk(
+  'user/list',
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    // get user token
+    const user = getState()?.users;
+    const { userAuth } = user;
+    const config = {
+      headers: {
+        Authorization: 'Bearer ' + userAuth?.token,
+      },
+    };
+    try {
+      const { data } = await axios.get(`${baseUrl}/api/users`, config);
+      return data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 // Profile
 export const fetchProfile = createAsyncThunk(
   'user/profile',
@@ -182,6 +206,62 @@ export const unfollowUser = createAsyncThunk(
   }
 );
 
+// Block User
+export const blockUser = createAsyncThunk(
+  'user/block',
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    // get user token
+    const user = getState()?.users;
+    const { userAuth } = user;
+    const config = {
+      headers: {
+        Authorization: 'Bearer ' + userAuth?.token,
+      },
+    };
+    try {
+      const { data } = await axios.put(
+        `${baseUrl}/api/users/block-user/${id}`,
+        {},
+        config
+      );
+      return data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
+// Unblock User
+export const unblockUser = createAsyncThunk(
+  'user/unblock',
+  async (id, { rejectWithValue, getState, dispatch }) => {
+    // get user token
+    const user = getState()?.users;
+    const { userAuth } = user;
+    const config = {
+      headers: {
+        Authorization: 'Bearer ' + userAuth?.token,
+      },
+    };
+    try {
+      const { data } = await axios.put(
+        `${baseUrl}/api/users/unblock-user/${id}`,
+        {},
+        config
+      );
+      return data;
+    } catch (error) {
+      if (!error?.response) {
+        throw error;
+      }
+      return rejectWithValue(error?.response?.data);
+    }
+  }
+);
+
 // Logout the user (remove the data of local storage)
 export const logoutUser = createAsyncThunk(
   'user/logout',
@@ -274,6 +354,23 @@ const usersSlice = createSlice({
       state.appErr = action?.payload?.message;
       state.serverErr = action?.error?.message;
     });
+    // fetch all users
+    builder.addCase(fetchAllUsers.pending, (state, action) => {
+      state.status = 'loading';
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(fetchAllUsers.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.usersList = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(fetchAllUsers.rejected, (state, action) => {
+      state.status = 'failed';
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    });
     // profile
     builder.addCase(fetchProfile.pending, (state, action) => {
       state.profileStatus = 'loading';
@@ -348,6 +445,40 @@ const usersSlice = createSlice({
       state.unfollowStatus = 'failed';
       state.unfollowAppErr = action?.payload?.message;
       state.unfollowServerErr = action?.error?.message;
+    });
+    // block user
+    builder.addCase(blockUser.pending, (state, action) => {
+      state.status = 'loading';
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(blockUser.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.block = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(blockUser.rejected, (state, action) => {
+      state.status = 'failed';
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
+    });
+    // unblock user
+    builder.addCase(unblockUser.pending, (state, action) => {
+      state.status = 'loading';
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(unblockUser.fulfilled, (state, action) => {
+      state.status = 'succeeded';
+      state.unblock = action?.payload;
+      state.appErr = undefined;
+      state.serverErr = undefined;
+    });
+    builder.addCase(unblockUser.rejected, (state, action) => {
+      state.status = 'failed';
+      state.appErr = action?.payload?.message;
+      state.serverErr = action?.error?.message;
     });
     // logout
     builder.addCase(logoutUser.pending, (state, action) => {

@@ -7,12 +7,17 @@ import Post from '../models/postModel.js';
 import User from '../models/userModel.js';
 import validateMongoId from '../utils/validateMongodbID.js';
 import cloudinaryUploadImage from '../utils/cloudinary.js';
+import { blockUser } from '../utils/blockUser.js';
 
 //-------------------------------------
 // Create a new post
 //-------------------------------------
 const createPost = expressAsyncHandler(async (req, res) => {
   const { _id } = req.user;
+
+  // Block user
+  blockUser(req.user);
+
   // validateMongoId(req.body.user);
   // Check for bad words
   const filter = new Filter();
@@ -66,10 +71,14 @@ const fetchAllPosts = expressAsyncHandler(async (req, res) => {
     if (hasCategory) {
       const posts = await Post.find({ category: hasCategory })
         .populate('user')
-        .populate('comments');
+        .populate('comments')
+        .sort('-createdAt');
       res.json(posts);
     } else {
-      const posts = await Post.find({}).populate('user').populate('comments');
+      const posts = await Post.find({})
+        .populate('user')
+        .populate('comments')
+        .sort('-createdAt');
       res.json(posts);
     }
   } catch (error) {

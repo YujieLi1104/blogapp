@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import sgMail from '@sendgrid/mail';
 import crypto from 'crypto';
 import cloudinaryUploadImage from '../utils/cloudinary.js';
+import { blockUser as blockUserUtil } from '../utils/blockUser.js';
 
 dotenv.config();
 
@@ -114,9 +115,24 @@ const fetchSingleUser = expressAsyncHandler(async (req, res) => {
 const fetchUserProfile = expressAsyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoId(id);
+  // step 1: Find the loggin user
+  const loginUserId = req?.user?._id?.toString();
+  // step 2: Check whether this user is already in the viewBy list
   try {
-    const profile = await User.findById(id).populate('posts');
-    res.json(profile);
+    const profile = await User.findById(id)
+      .populate('posts')
+      .populate('viewedBy');
+    const alreadyViewedBy = profile?.viewedBy?.find((user) => {
+      return user?._id?.toString() === loginUserId;
+    });
+    if (alreadyViewedBy) {
+      res.json(profile);
+    } else {
+      const profile = await User.findByIdAndUpdate(id, {
+        $push: { viewedBy: loginUserId },
+      });
+      res.json(profile);
+    }
   } catch (error) {
     res.json(error);
   }
@@ -127,6 +143,9 @@ const fetchUserProfile = expressAsyncHandler(async (req, res) => {
 //-------------------------------------
 const updateUserProfile = expressAsyncHandler(async (req, res) => {
   const { _id } = req?.user;
+
+  // block user
+  blockUserUtil(req?.user);
 
   validateMongoId(_id);
 
