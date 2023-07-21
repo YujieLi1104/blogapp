@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useFormik } from 'formik';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Yup from 'yup';
 import poster from '../../img/poster.png';
@@ -147,6 +147,14 @@ const Login = () => {
                       </button>
                     )}
                   </form>
+                  <div>
+                    <Link
+                      className='font-medium text-blue-500 hover:text-blue-600'
+                      to='/password-reset-token'
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
                 </div>
               </div>
               <div className='w-full lg:w-3/5 px-4 mb-16 lg:mb-0 order-first lg:order-last'>

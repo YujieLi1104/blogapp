@@ -37,7 +37,7 @@ userRoute.put(
 userRoute.get('/', authMiddleware, fetchAllUsers);
 userRoute.put('/password', authMiddleware, updateUserPassword);
 userRoute.post('/forget-password', generateForgetPasswordToken);
-userRoute.post('/reset-password', resetUserPassword);
+userRoute.put('/reset-password', resetUserPassword);
 userRoute.put('/follow', authMiddleware, followingUser);
 userRoute.put('/unfollow', authMiddleware, unfollowUser);
 userRoute.post(

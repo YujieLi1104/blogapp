@@ -1,10 +1,10 @@
 /** @format */
 
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Dropzone from 'react-dropzone';
+import { Navigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { createPost } from '../../redux/slices/posts/postSlice.js';
 import CategoryDropDown from '../Catigories/CategoryDropDown.js';
@@ -33,7 +33,6 @@ const Container = styled.div`flex: 1,
   transition: border 0.24s ease-in-out;`;
 
 export default function AddNewPost() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   // select store data
   const post = useSelector((state) => state?.post);
@@ -58,7 +57,7 @@ export default function AddNewPost() {
     validationSchema: formSchema,
   });
 
-  if (isCreated) return navigate('/posts');
+  if (isCreated) return <Navigate to='/posts' />;
 
   return (
     <>
