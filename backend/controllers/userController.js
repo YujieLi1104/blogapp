@@ -373,7 +373,6 @@ const generateForgetPasswordToken = expressAsyncHandler(async (req, res) => {
   try {
     // Generate a token
     const token = await user.generatePasswordResetToken();
-    console.log(token);
     // save the user
     await user.save();
     // Build message
